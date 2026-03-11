@@ -5,6 +5,7 @@
 
 require_once __DIR__ . '/../models/Booking.php';
 require_once __DIR__ . '/../models/Vehicle.php';
+require_once __DIR__ . '/../models/AdminLogger.php';
 
 class BookingController
 {
@@ -88,6 +89,7 @@ class BookingController
         }
 
         if ($this->model->updateStatus($id, $status)) {
+            AdminLogger::log('Update Status', "Booking $id -> $status");
             echo json_encode(['success' => true]);
         } else {
             header('HTTP/1.1 500 Internal Server Error');
@@ -116,6 +118,7 @@ class BookingController
         }
 
         if ($this->model->updatePaymentStatus($id, $paymentStatus)) {
+            AdminLogger::log('Update Payment', "Booking $id -> $paymentStatus");
             echo json_encode(['success' => true]);
         } else {
             header('HTTP/1.1 500 Internal Server Error');
@@ -134,6 +137,7 @@ class BookingController
         }
 
         if ($this->model->updateStatus($id, 'Confirmed')) {
+            AdminLogger::log('Confirm Booking', "Booking $id confirmed");
             $this->redirect('booking_confirmed', 'success');
         } else {
             $this->redirect('error', 'danger');
@@ -148,6 +152,7 @@ class BookingController
         }
 
         if ($this->model->delete($id)) {
+            AdminLogger::log('Delete Booking', "Deleted Booking $id");
             $this->redirect('deleted', 'success');
         } else {
             $this->redirect('error', 'danger');
@@ -179,6 +184,7 @@ class BookingController
         }
 
         if ($this->model->create($data)) {
+            AdminLogger::log('Create Booking', "Created manual booking for " . $data['customer_name']);
             $this->redirect('created', 'success');
         } else {
             $this->redirect('error', 'danger');

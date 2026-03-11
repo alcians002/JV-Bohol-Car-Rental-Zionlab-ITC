@@ -72,10 +72,10 @@ $msgType = $_GET['msg_type'] ?? 'info';
         </button>
 
         <?php if ($msg): ?>
-                <div class="flash-toast alert alert-<?= htmlspecialchars($msgType) ?> alert-dismissible fade show shadow">
-                    <?= htmlspecialchars($msg) ?>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-                </div>
+            <div class="flash-toast alert alert-<?= htmlspecialchars($msgType) ?> alert-dismissible fade show shadow">
+                <?= htmlspecialchars($msg) ?>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+            </div>
         <?php endif; ?>
 
         <!-- Page Header -->
@@ -156,105 +156,102 @@ $msgType = $_GET['msg_type'] ?? 'info';
                     </thead>
                     <tbody id="bookingsTableBody">
                         <?php if (empty($bookings)): ?>
-                                <tr>
-                                    <td colspan="6" class="text-center py-5" style="color: var(--admin-muted);">No bookings
-                                        found.</td>
-                                </tr>
+                            <tr>
+                                <td colspan="6" class="text-center py-5" style="color: var(--admin-muted);">No bookings
+                                    found.</td>
+                            </tr>
                         <?php else: ?>
-                                <?php foreach ($bookings as $b): ?>
-                                        <tr>
-                                            <td class="font-monospace">
-                                                <span class="badge bg-secondary bg-opacity-25 text-light border border-secondary px-2 py-1"><?= htmlspecialchars($b['booking_ref']) ?></span>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                        <i class="fas fa-user"></i>
-                                                    </div>
-                                                    <div>
-                                                        <div class="fw-bold text-white mb-1"><?= htmlspecialchars($b['customer_name']) ?></div>
-                                                        <div class="small d-flex align-items-center gap-1" style="color: var(--admin-muted);">
-                                                            <i class="fas fa-phone-alt" style="font-size: 0.7rem;"></i> <?= htmlspecialchars($b['customer_phone']) ?>
-                                                        </div>
-                                                    </div>
+                            <?php foreach ($bookings as $b): ?>
+                                <tr>
+                                    <td class="font-monospace">
+                                        <span class="badge bg-secondary bg-opacity-25 text-light border border-secondary px-2 py-1"><?= htmlspecialchars($b['booking_ref']) ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold text-white mb-1"><?= htmlspecialchars($b['customer_name']) ?></div>
+                                                <div class="small d-flex align-items-center gap-1" style="color: var(--admin-muted);">
+                                                    <i class="fas fa-phone-alt" style="font-size: 0.7rem;"></i> <?= htmlspecialchars($b['customer_phone']) ?>
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <?php if ($b['image_path']): ?>
-                                                            <img src="uploads/<?= htmlspecialchars($b['image_path']) ?>" alt=""
-                                                                style="width: 64px; height: 44px; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                                    <?php else: ?>
-                                                            <div
-                                                                style="width: 64px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-                                                                <i class="fas fa-car text-muted opacity-50"></i>
-                                                            </div>
-                                                    <?php endif; ?>
-                                                    <div>
-                                                        <div class="fw-medium text-light mb-1"><?= htmlspecialchars($b['model_name']) ?></div>
-                                                        <div class="badge bg-dark border border-secondary text-secondary" style="font-size: 0.70rem; font-weight: 500;">
-                                                            <?= htmlspecialchars($b['category']) ?>
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <?php if ($b['image_path']): ?>
+                                                <img src="uploads/<?= htmlspecialchars($b['image_path']) ?>" alt=""
+                                                    style="width: 64px; height: 44px; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                            <?php else: ?>
+                                                <div
+                                                    style="width: 64px; height: 44px; background: rgba(255,255,255,0.05); border-radius: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                                                    <i class="fas fa-car text-muted opacity-50"></i>
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex flex-column gap-1">
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25" style="width: 35px;">OUT</span>
-                                                        <span class="small text-light form-control-plaintext py-0"><?= date('M j, Y g:i A', strtotime($b['pickup_date'])) ?></span>
-                                                    </div>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25" style="width: 35px;">IN</span>
-                                                        <span class="small text-light form-control-plaintext py-0"><?= date('M j, Y g:i A', strtotime($b['return_date'])) ?></span>
-                                                    </div>
+                                            <?php endif; ?>
+                                            <div>
+                                                <div class="fw-medium text-light mb-1"><?= htmlspecialchars($b['model_name']) ?></div>
+                                                <div class="badge bg-dark border border-secondary text-secondary" style="font-size: 0.70rem; font-weight: 500;">
+                                                    <?= htmlspecialchars($b['category']) ?>
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex flex-column gap-2">
-                                                    <select class="form-select form-select-sm status-select bg-dark text-white border-secondary"
-                                                        data-id="<?= (int) $b['id'] ?>" style="border-radius: 0.5rem; font-weight: 500;">
-                                                        <option value="Pending" <?= $b['booking_status'] === 'Pending' ? 'selected' : '' ?>>🕒 Pending</option>
-                                                        <option value="Confirmed" <?= $b['booking_status'] === 'Confirmed' ? 'selected' : '' ?>>✅ Confirmed</option>
-                                                        <option value="Active" <?= $b['booking_status'] === 'Active' ? 'selected' : '' ?>>🚗 Active (Out)</option>
-                                                        <option value="Completed" <?= $b['booking_status'] === 'Completed' ? 'selected' : '' ?>>🏁 Completed</option>
-                                                        <option value="Cancelled" <?= $b['booking_status'] === 'Cancelled' ? 'selected' : '' ?>>❌ Cancelled</option>
-                                                    </select>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25" style="width: 35px;">OUT</span>
+                                                <span class="small text-light form-control-plaintext py-0"><?= date('M j, Y g:i A', strtotime($b['pickup_date'])) ?></span>
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25" style="width: 35px;">IN</span>
+                                                <span class="small text-light form-control-plaintext py-0"><?= date('M j, Y g:i A', strtotime($b['return_date'])) ?></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column gap-2">
+                                            <select class="form-select form-select-sm status-select bg-dark text-white border-secondary"
+                                                data-id="<?= (int) $b['id'] ?>" style="border-radius: 0.5rem; font-weight: 500;">
+                                                <option value="Pending" <?= $b['booking_status'] === 'Pending' ? 'selected' : '' ?>>🕒 Pending</option>
+                                                <option value="Confirmed" <?= $b['booking_status'] === 'Confirmed' ? 'selected' : '' ?>>✅ Confirmed</option>
+                                                <option value="Active" <?= $b['booking_status'] === 'Active' ? 'selected' : '' ?>>🚗 Active (Out)</option>
+                                                <option value="Completed" <?= $b['booking_status'] === 'Completed' ? 'selected' : '' ?>>🏁 Completed</option>
+                                                <option value="Cancelled" <?= $b['booking_status'] === 'Cancelled' ? 'selected' : '' ?>>❌ Cancelled</option>
+                                            </select>
                                             
-                                                    <?php
-                                                    // Dynamic Payment Badge Colors
-                                                    $payColor = 'secondary';
-                                                    if ($b['payment_status'] === 'Fully Paid')
-                                                        $payColor = 'success';
-                                                    if ($b['payment_status'] === 'Deposit Paid')
-                                                        $payColor = 'info';
-                                                    if ($b['payment_status'] === 'Unpaid')
-                                                        $payColor = 'danger';
-                                                    ?>
-                                                    <div class="d-flex align-items-center justify-content-between px-1 mt-1">
-                                                        <select class="form-select form-select-sm payment-select bg-<?= $payColor ?> bg-opacity-25 text-<?= $payColor ?> border border-<?= $payColor ?>"
-                                                            data-id="<?= (int) $b['id'] ?>" style="border-radius: 0.5rem; font-weight: 600; font-size: 0.75rem; width: auto; min-width: 100px; padding: 0.1rem 1.25rem 0.1rem 0.5rem;">
-                                                            <option value="Unpaid" <?= $b['payment_status'] === 'Unpaid' ? 'selected' : '' ?>>Unpaid</option>
-                                                            <option value="Deposit Paid" <?= $b['payment_status'] === 'Deposit Paid' ? 'selected' : '' ?>>Deposit Paid</option>
-                                                            <option value="Fully Paid" <?= $b['payment_status'] === 'Fully Paid' ? 'selected' : '' ?>>Fully Paid</option>
-                                                        </select>
-                                                        <span class="small fw-bold text-success ms-2">₱<?= number_format((float) $b['total_price'], 0) ?></span>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="text-end">
-                                                <form action="index.php?page=bookings&action=delete" method="POST" class="d-inline"
-                                                    onsubmit="return confirm('Are you sure you want to completely delete this booking? This is irreversible.');">
-                                                    <input type="hidden" name="id" value="<?= (int) $b['id'] ?>">
-                                                    <button type="submit"
-                                                        class="btn-action delete btn-delete bg-transparent border-0 text-danger p-2 fs-5"
-                                                        title="Delete Booking">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                <?php endforeach; ?>
+                                            <?php 
+                                            // Dynamic Payment Badge Colors
+                                            $payColor = 'secondary';
+                                            if ($b['payment_status'] === 'Fully Paid') $payColor = 'success';
+                                            if ($b['payment_status'] === 'Deposit Paid') $payColor = 'info';
+                                            if ($b['payment_status'] === 'Unpaid') $payColor = 'danger';
+                                            ?>
+                                            <div class="d-flex align-items-center justify-content-between px-1 mt-1">
+                                                <select class="form-select form-select-sm payment-select bg-<?= $payColor ?> bg-opacity-25 text-<?= $payColor ?> border border-<?= $payColor ?>"
+                                                    data-id="<?= (int) $b['id'] ?>" style="border-radius: 0.5rem; font-weight: 600; font-size: 0.75rem; width: auto; min-width: 100px; padding: 0.1rem 1.25rem 0.1rem 0.5rem;">
+                                                    <option value="Unpaid" <?= $b['payment_status'] === 'Unpaid' ? 'selected' : '' ?>>Unpaid</option>
+                                                    <option value="Deposit Paid" <?= $b['payment_status'] === 'Deposit Paid' ? 'selected' : '' ?>>Deposit Paid</option>
+                                                    <option value="Fully Paid" <?= $b['payment_status'] === 'Fully Paid' ? 'selected' : '' ?>>Fully Paid</option>
+                                                </select>
+                                                <span class="small fw-bold text-success ms-2">₱<?= number_format((float) $b['total_price'], 0) ?></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <form action="index.php?page=bookings&action=delete" method="POST" class="d-inline"
+                                            onsubmit="return confirm('Are you sure you want to completely delete this booking? This is irreversible.');">
+                                            <input type="hidden" name="id" value="<?= (int) $b['id'] ?>">
+                                            <button type="submit"
+                                                class="btn-action delete btn-delete bg-transparent border-0 text-danger p-2 fs-5"
+                                                title="Delete Booking">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
                 </table>
@@ -296,7 +293,7 @@ $msgType = $_GET['msg_type'] ?? 'info';
                                     required>
                                     <option value="" disabled selected>Select a vehicle...</option>
                                     <?php foreach ($vehicles as $v): ?>
-                                            <option value="<?= $v['id'] ?>"><?= htmlspecialchars($v['model_name']) ?></option>
+                                        <option value="<?= $v['id'] ?>"><?= htmlspecialchars($v['model_name']) ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

@@ -9,6 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require_once __DIR__ . '/models/Admin.php';
+require_once __DIR__ . '/models/AdminLogger.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
@@ -28,9 +29,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_regenerate_id(true);
             $_SESSION['admin_logged_in'] = true;
             $_SESSION['admin_username'] = $username;
+
+            AdminLogger::log('Login', "Successful login for user: $username");
+
             header('Location: index.php');
             exit;
         } else {
+            // Log failed attempt but with system/unknown user to avoid session spoofing limits
+            AdminLogger::log('Failed Login', "Failed attempt for username: $username");
             $error = 'Invalid username or password.';
         }
     } else {

@@ -8,10 +8,10 @@ class Database
 {
     private static ?PDO $instance = null;
 
-    private const HOST = 'sql204.infinityfree.com';
-    private const DB = 'if0_41224611_fleet_db';
-    private const USER = 'if0_41224611';
-    private const PASS = 'ALCago186282';
+    private const HOST = 'localhost';
+    private const DB = 'fleet_db';
+    private const USER = 'root';
+    private const PASS = '';
     private const PORT = 3306;
 
     /** Prevent direct instantiation */

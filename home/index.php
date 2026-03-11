@@ -115,6 +115,8 @@ require_once __DIR__ . "/../public_bootstrap.php";
             </div>
 
             <?php
+            require_once __DIR__ . '/../admin/models/Booking.php';
+
             $categoryLabels = [
                 'hatchbacks' => 'Hatchback',
                 'sedans' => 'Sedan',
@@ -122,29 +124,77 @@ require_once __DIR__ . "/../public_bootstrap.php";
                 'pickup-trucks' => 'Pickup Truck',
                 'vans' => 'Van'
             ];
-            $allowedModels = ['Toyota Wigo 2019', 'Toyota Vios 2024', 'Toyota Innova 2024', 'Nissan Navara 2023'];
-            $homeVehicles = [];
+
+            // 1. Fetch bookings to find most booked vehicles
+            $bookingModel = new Booking();
+            $allBookings = $bookingModel->getAll();
+
+            $bookingCounts = [];
+            foreach ($allBookings as $b) {
+                $vid = $b['vehicle_id'];
+                if (!isset($bookingCounts[$vid]))
+                    $bookingCounts[$vid] = 0;
+                $bookingCounts[$vid]++;
+            }
+
+            // 2. Group available vehicles by category
+            $vehiclesByCategory = [
+                'hatchbacks' => [],
+                'sedans' => [],
+                'mpvs' => [],
+                'pickup-trucks' => [],
+                'vans' => []
+            ];
+
             foreach ($vehicles as $v) {
-                if (in_array($v['model_name'], $allowedModels)) {
-                    $homeVehicles[] = $v;
+                if (isset($vehiclesByCategory[$v['category']])) {
+                    $v['booking_count'] = $bookingCounts[$v['id']] ?? 0;
+                    $vehiclesByCategory[$v['category']][] = $v;
                 }
             }
-            // Ensure they appear in the exact order requested
-            usort($homeVehicles, function ($a, $b) use ($allowedModels) {
-                return array_search($a['model_name'], $allowedModels) - array_search($b['model_name'], $allowedModels);
-            });
+
+            // 3. Select top vehicle per category
+            $homeVehicles = [];
+            foreach ($vehiclesByCategory as $cat => $catVehicles) {
+                if (empty($catVehicles))
+                    continue;
+
+                // Sort descending by booking count
+                usort($catVehicles, function ($a, $b) {
+                    if ($b['booking_count'] == $a['booking_count']) {
+                        return $a['id'] <=> $b['id']; // stable tiebreaker
+                    }
+                    return $b['booking_count'] <=> $a['booking_count'];
+                });
+
+                // If no booking data exists, pick a random available unit
+                if ($catVehicles[0]['booking_count'] == 0) {
+                    $topVehicle = $catVehicles[array_rand($catVehicles)];
+                } else {
+                    $topVehicle = $catVehicles[0];
+                }
+
+                $homeVehicles[] = $topVehicle;
+            }
             ?>
             <div class="row g-4 justify-content-center">
                 <?php foreach ($homeVehicles as $v): ?>
                     <div class="col-12 col-sm-6 col-lg-3 animate-fade-up animate-delay-200">
                         <div
-                            class="card h-100 border border-surface bg-surface rounded-2xl shadow-sm overflow-hidden group">
+                            class="card h-100 border border-surface bg-surface rounded-2xl shadow-sm overflow-hidden group fleet-card">
                             <div class="position-relative overflow-hidden"
                                 style="height: 12rem; background-color: #f3f4f6;">
+                                <!-- Status Badge -->
+                                <span
+                                    class="position-absolute top-0 start-0 m-3 z-1 badge badge-available small rounded-pill px-2 py-1 fw-semibold">Available</span>
+                                <!-- Feature Badge -->
                                 <?php if ($v['badge_label']): ?>
                                     <span
-                                        class="position-absolute top-0 end-0 m-3 z-1 badge bg-white text-dark shadow-sm px-2 py-1"><?= htmlspecialchars($v['badge_label']) ?></span>
+                                        class="position-absolute top-0 end-0 m-3 z-1 badge bg-white text-dark shadow-sm px-2 py-1 fw-semibold small"><?= htmlspecialchars($v['badge_label']) ?></span>
                                 <?php endif; ?>
+                                <!-- Year Badge -->
+                                <span
+                                    class="position-absolute bottom-0 start-0 m-3 z-1 badge bg-dark bg-opacity-75 text-white small rounded-pill px-2 py-1"><?= htmlspecialchars($v['year']) ?></span>
                                 <?php if ($v['image_path']): ?>
                                     <img src="<?= UPLOAD_URL . htmlspecialchars($v['image_path']) ?>"
                                         alt="<?= htmlspecialchars($v['model_name']) ?>"
@@ -155,18 +205,38 @@ require_once __DIR__ . "/../public_bootstrap.php";
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <div class="card-body p-4">
+                            <div class="card-body p-4 d-flex flex-column vehicle-card">
                                 <h3 class="h5 fw-bold mb-1"><?= htmlspecialchars($v['model_name']) ?></h3>
                                 <div class="text-primary-homepage small fw-medium mb-3">
-                                    <?= htmlspecialchars($categoryLabels[$v['category']] ?? $v['category']) ?>
+                                    <?= htmlspecialchars($categoryLabels[$v['category']] ?? $v['category']) ?> •
+                                    <?= htmlspecialchars($v['color']) ?>
                                 </div>
 
-                                <div class="d-flex align-items-end justify-content-between mt-auto">
-                                    <div class="text-muted-custom" style="font-size: 0.75rem;">Starts at</div>
+                                <div class="d-flex flex-wrap gap-2 mb-4 text-muted-custom" style="font-size: 0.75rem;">
+                                    <span
+                                        class="d-flex align-items-center gap-1 rounded bg-light border border-surface px-2 py-1"><i
+                                            class="fas fa-user-friends small text-muted-custom"></i>
+                                        <?= htmlspecialchars($v['seating']) ?></span>
+                                    <span
+                                        class="d-flex align-items-center gap-1 rounded bg-light border border-surface px-2 py-1"><i
+                                            class="fas fa-cogs small text-muted-custom"></i>
+                                        <?= htmlspecialchars($v['transmission']) ?></span>
+                                </div>
+
+                                <div class="d-flex align-items-end justify-content-between mb-4 mt-auto">
+                                    <div class="text-muted-custom small">Starts at</div>
                                     <div class="fs-5 fw-bold text-primary-homepage">
                                         ₱<?= number_format((float) $v['price_per_day'], 0) ?><span
-                                            class="fw-normal text-muted-custom" style="font-size: 0.75rem;">/day</span>
-                                    </div>
+                                            class="fw-normal text-muted-custom small">/day</span></div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <a href="../contact/index.html?vehicle_id=<?= (int) $v['id'] ?>&vehicle=<?= urlencode($v['model_name']) ?>"
+                                        class="btn btn-primary-custom w-100 rounded-3 fw-semibold d-flex align-items-center justify-content-center gap-2 py-2"
+                                        style="background-color: var(--primary-alt2, #00d632); border: none;">
+                                        <span class="material-icons-round" style="font-size: 1.1rem;">chat</span>
+                                        Inquire
+                                    </a>
                                 </div>
                             </div>
                         </div>

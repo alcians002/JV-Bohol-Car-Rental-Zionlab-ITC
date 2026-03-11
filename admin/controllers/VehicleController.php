@@ -6,6 +6,7 @@
  */
 
 require_once __DIR__ . '/../models/Vehicle.php';
+require_once __DIR__ . '/../models/AdminLogger.php';
 
 class VehicleController
 {
@@ -124,6 +125,7 @@ class VehicleController
             $data['status'],
             $imagePath
         );
+        AdminLogger::log('Add Vehicle', "Vehicle: " . $data['model_name']);
         $this->redirect('Vehicle added successfully!', 'success');
     }
 
@@ -167,6 +169,7 @@ class VehicleController
             $data['status'],
             $imagePath
         );
+        AdminLogger::log('Update Vehicle', "Vehicle ID $id");
         $this->redirect('Vehicle updated successfully!', 'success');
     }
 
@@ -182,6 +185,9 @@ class VehicleController
         }
 
         $deleted = $this->model->delete($id);
+        if ($deleted) {
+            AdminLogger::log('Delete Vehicle', "Vehicle ID $id");
+        }
         if ($deleted && $deleted['image_path']) {
             $file = $this->uploadDir . $deleted['image_path'];
             if (file_exists($file))
@@ -206,6 +212,9 @@ class VehicleController
         }
 
         $ok = $this->model->updateStatus($id, $status);
+        if ($ok) {
+            AdminLogger::log('Update Vehicle Status', "Vehicle ID $id -> $status");
+        }
         echo json_encode(['success' => $ok]);
         exit;
     }

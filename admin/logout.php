@@ -13,6 +13,9 @@ if (ini_get("session.use_cookies")) {
         $params["httponly"]
     );
 }
+require_once __DIR__ . '/models/AdminLogger.php';
+AdminLogger::log('Logout', "User successfully logged out");
+
 session_destroy();
 header('Location: login.php');
 exit;
